@@ -16,7 +16,8 @@ router.post("/register", async (req, res) => {
   try {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
-  } catch (err) {
+  } 
+  catch (err) {
     res.status(500).json(err);
   }
 });
@@ -25,16 +26,21 @@ router.post("/register", async (req, res) => {
 
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    // console.log(user);
+    console.log(req.body.username)
+    const user = await User.findOne({ email: req.body.username });
+    console.log(user)
 
-    if(!user){ res.status(401).json("Wrong credentials!")};
+    if(!user){ 
+      res.status(401).json("Wrong credentials!")
+      return
+    };
 
 
     const isMatch = await bcrypt.compare(req.body.password, user.password)
 
     if(!isMatch){
-      res.status(401).json("Wrong credentials!");
+      res.status(401).json("Wrong credentials!")
+      return
     }
     const accessToken = jwt.sign(
       {
@@ -49,7 +55,8 @@ router.post("/", async (req, res) => {
 
     console.log(user._doc);
     res.status(200).json({...others, accessToken});
-  } catch (err) {
+  }
+  catch(err){
     res.status(500).json(err);
   }
 });
